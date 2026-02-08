@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ワークル空き状況</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { font-size: 20px; color: #333; }
+        .update-time { font-size: 12px; color: #666; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f8f8f8; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Studio Worcle 大久保店</h1>
+        <div id="update-time" class="update-time">読み込み中...</div>
+        <table>
+            <thead>
+                <tr><th>スタジオ名</th><th>状況</th></tr>
+            </thead>
+            <tbody id="studio-list">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        // GitHubにあるJSONファイルを読み込む
+        fetch('okubo_status.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('update-time').innerText = "最終更新: " + data.last_update;
+                const list = document.getElementById('studio-list');
+                data.rooms.forEach(room => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${room.name}</td><td>${room.status}</td>`;
+                    list.appendChild(tr);
+                });
+            });
+    </script>
+</body>
+</html>
