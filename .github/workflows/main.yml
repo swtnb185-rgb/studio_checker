@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests beautifulsoup4
       - name: Run Scraper
-        run: python okubo.reserve > okubo_status.json
+        run: python scraper.py > okubo_status.json
       - name: Commit and Push
         run: |
           git config --local user.email "action@github.com"
