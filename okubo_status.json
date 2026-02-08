@@ -1,2 +1,6 @@
-URL access success: https://www.studioworcle.com/search/?date=2026/02/08&store=6
-Successfully saved okubo_status.json
+{
+    "last_update": "2026-02-08 03:16:50",
+    "date": "2026/02/08",
+    "store": "大久保",
+    "rooms": []
+}
