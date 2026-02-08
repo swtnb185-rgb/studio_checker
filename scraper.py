@@ -3,31 +3,37 @@ from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 
-def get_okubo_status():
+def get_worcle_status():
     # 本日の日付を取得
     today = datetime.now().strftime("%Y/%m/%d")
-    # 大久保店のURL
+    # 大久保店のURL（store=6）
     url = f"https://www.studioworcle.com/search/?date={today}&store=6"
     
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        # 取得できたか確認用
-        print(f"URL access success: {url}")
-        
-        # 現時点ではファイルが作られることを確認するため、テストデータを保存
-        results = {
-            "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "store": "Okubo",
-            "message": "Scraper is running!"
-        }
-        
-        with open("okubo_status.json", "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=4, ensure_ascii=False)
-        print("Successfully saved okubo_status.json")
+    headers = {"User-Agent": "Mozilla/5.0"} # ブラウザからのアクセスを装う
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = {
+        "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "date": today,
+        "store": "大久保",
+        "rooms": []
+    }
 
-    except Exception as e:
-        print(f"Error: {e}")
+    # スタジオの各部屋の情報を抽出
+    # ※サイト構造に基づき、部屋名と予約表の列を解析
+    rooms = soup.select('.room_item') # 部屋ごとのブロック
+    for room in rooms:
+        name = room.select_one('.room_name').text.strip()
+        # 簡易的に「空き」があるかどうかの判定ロジック（実際はもっと詳細に取れます）
+        # ここでは部屋名を取得するところまでを確実に実装
+        results["rooms"].append({
+            "name": name,
+            "status": "取得成功"
+        })
+    
+    with open("okubo_status.json", "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=4, ensure_ascii=False)
 
 if __name__ == "__main__":
-    get_okubo_status()
+    get_worcle_status()
